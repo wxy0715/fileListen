@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Schema(name = "FileOperationLog", description = "文件监听配置表")
+@Schema(name = "fileMonitorConfig", description = "文件监听配置表")
 @TableName(value = "file_monitor_config", autoResultMap = true)
 public class FileMonitorConfigPo extends AbstractCacheableModel {
 
