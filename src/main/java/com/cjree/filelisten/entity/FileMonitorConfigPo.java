@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Schema(name = "FileOperationLog", description = "文件监听配置表")
-@TableName(value = "file_operation_log", autoResultMap = true)
+@TableName(value = "file_monitor_config", autoResultMap = true)
 public class FileMonitorConfigPo extends AbstractCacheableModel {
 
     @Schema(description = "监听的文件/目录绝对路径")
