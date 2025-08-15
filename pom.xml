@@ -18,6 +18,7 @@
     </properties>
 
     <dependencyManagement>
+        <!--依赖底层框架:https://github.com/wxy0715/java_bucket-->
         <dependencies>
             <dependency>
                 <groupId>com.cjree</groupId>
@@ -64,6 +65,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.3.12</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
