@@ -48,7 +48,7 @@ public abstract class FileMonitorServiceBase {
             Path path = Paths.get(fileMonitorConfigPo.getMonitorPath());
             // 新增目录监听
             if (Objects.equals(fileMonitorConfigPo.getPathType(), PathTypeEnum.DIRECTORY.getCode())) {
-                addMonitorDirectory(path, fileMonitorConfigPo.getRecursive());
+                addMonitorDirectory(path, fileMonitorConfigPo.getRecursives());
                 continue;
             }
             // 新增文件监听
@@ -64,15 +64,15 @@ public abstract class FileMonitorServiceBase {
     /**
      * 添加目录监听
      */
-    protected void addMonitorDirectory(Path directory, boolean recursive) {
+    protected void addMonitorDirectory(Path directory, boolean recursives) {
         try {
             if (!Files.exists(directory)) {
                 log.error("目录不存在: {}", directory);
                 return;
             }
-            registerDirectory(directory, recursive);
+            registerDirectory(directory, recursives);
 
-            log.info("增加监听目录: {} (是否递归子目录: {})", directory, recursive);
+            log.info("增加监听目录: {} (是否递归子目录: {})", directory, recursives);
         } catch (Exception e) {
             log.error("失败的添加目录监听: {}", directory, e);
         }
@@ -81,7 +81,7 @@ public abstract class FileMonitorServiceBase {
     /**
      * 注册目录到WatchService
      */
-    protected void registerDirectory(Path dir, boolean recursive) throws IOException {
+    protected void registerDirectory(Path dir, boolean recursives) throws IOException {
         if (!Files.isDirectory(dir)) {
             log.error("传参路径必须为目录: {}", dir);
             return;
@@ -108,7 +108,7 @@ public abstract class FileMonitorServiceBase {
             // 保存配置到数据库（如果不存在）
             saveOrUpdateConfig(dir.toString(),
                     PathTypeEnum.DIRECTORY.getCode(),
-                    recursive, Boolean.TRUE,null,null);
+                    recursives, Boolean.TRUE,null,null);
         } catch (Exception e) {
             // 注册失败，移除临时占位
             watchKeys.remove(dir);
@@ -116,7 +116,7 @@ public abstract class FileMonitorServiceBase {
         }
 
         // 如果需要递归，注册所有子目录
-        if (recursive) {
+        if (recursives) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
                 for (Path subDir : stream) {
                     if (Files.isDirectory(subDir)) {
@@ -196,7 +196,7 @@ public abstract class FileMonitorServiceBase {
      * 保存或更新监听配置
      */
     private void saveOrUpdateConfig(String path, String pathType,
-                                    boolean recursive, boolean enabled,String includePatterns, String excludePatterns) {
+                                    boolean recursives, boolean enabled,String includePatterns, String excludePatterns) {
         // 根据path查询查询数据库id
         FileMonitorConfigPo fileMonitorConfigPo = fileMonitorConfigService.lambdaQuery()
                 .eq(FileMonitorConfigPo::getMonitorPath, path)
@@ -208,7 +208,7 @@ public abstract class FileMonitorServiceBase {
         config.setId(fileMonitorConfigPo != null ? fileMonitorConfigPo.getId() : null);
         config.setMonitorPath(path);
         config.setPathType(pathType);
-        config.setRecursive(recursive);
+        config.setRecursives(recursives);
         config.setEnabled(enabled);
         config.setIncludePatterns(includePatterns);
         config.setExcludePatterns(excludePatterns);

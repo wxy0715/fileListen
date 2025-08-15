@@ -1,8 +1,10 @@
 package com.cjree.filelisten.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.cjree.core.common.utils.CoreObjectUtil;
+import com.cjree.filelisten.entity.FileMonitorConfigPo;
 import com.cjree.filelisten.enums.OperationTypeEnum;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +33,6 @@ public class FileMonitorServiceImpl extends FileMonitorServiceBase implements Fi
     // 数据库写入线程池
     private final ExecutorService dbWriterExecutor = Executors.newSingleThreadExecutor();
 
-    @PostConstruct
     @Override
     public void startMonitoring() {
         try {
@@ -200,10 +202,15 @@ public class FileMonitorServiceImpl extends FileMonitorServiceBase implements Fi
             if (key != null) {
                 key.cancel();
             }
-            // 更新数据库配置
-            updateConfigStatus(path.toString(), false);
-            log.info("移除监听目录: {}", directory);
         });
+        // 更新数据库配置
+        List<Long> ids = SimpleQuery.list(
+                Wrappers.lambdaQuery(FileMonitorConfigPo.class)
+                        .likeRight(FileMonitorConfigPo::getMonitorPath, directory),
+                FileMonitorConfigPo::getId
+        );
+        fileMonitorConfigService.logicDeleteBatch(ids);
+        log.info("移除监听目录及子目录: {}", directory);
     }
 
     public void handleDirectoryCreate(File directory) {
@@ -231,7 +238,7 @@ public class FileMonitorServiceImpl extends FileMonitorServiceBase implements Fi
     }
 
     public void handleFileDelete(File file) {
-        log.info("File deleted: {}", file.getAbsolutePath());
+        log.info("删除文件: {}", file.getAbsolutePath());
         saveOperationLog(file.getAbsolutePath(), "DELETE", null, getFileOperator());
     }
 

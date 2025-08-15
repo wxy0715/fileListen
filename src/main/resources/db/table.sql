@@ -22,7 +22,7 @@ CREATE TABLE `file_monitor_config` (
     `id` bigint NOT NULL COMMENT '主键ID',
     `monitor_path` varchar(255) NOT NULL COMMENT '监听的文件/目录绝对路径',
     `path_type` varchar(20) NOT NULL COMMENT '路径类型：DIRECTORY(目录)、FILE(文件)',
-    `recursive` tinyint NOT NULL DEFAULT '1' COMMENT '是否递归监听：1-是，0-否（仅对目录有效）',
+    `recursives` tinyint NOT NULL DEFAULT '1' COMMENT '是否递归监听：1-是，0-否（仅对目录有效）',
     `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '是否启用：1-启用，0-禁用',
     `include_patterns` varchar(500) DEFAULT NULL COMMENT '包含的文件模式（多个用逗号分隔）',
     `exclude_patterns` varchar(500) DEFAULT NULL COMMENT '排除的文件模式（多个用逗号分隔）',

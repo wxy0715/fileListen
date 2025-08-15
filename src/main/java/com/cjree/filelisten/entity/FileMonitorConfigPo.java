@@ -24,8 +24,8 @@ public class FileMonitorConfigPo extends AbstractCacheableModel {
     private String pathType;
 
     @Schema(description = "是否递归监听：1-是，0-否（仅对目录有效）")
-    @TableField("recursive")
-    private Boolean recursive;
+    @TableField("recursives")
+    private Boolean recursives;
 
     @Schema(description = "是否启用：1-启用，0-禁用")
     @TableField("enabled")

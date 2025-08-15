@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableAsync
-public class ExecutorConfig {
+public class ExecutorPoolConfig {
 
     /**
      * 事件处理线程池
